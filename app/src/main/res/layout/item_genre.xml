@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:strokeColor="@color/colorGrey"
+    app:strokeWidth="@dimen/dimen_1dp"
+    app:contentPadding="@dimen/dimen_16dp"
+    app:cardCornerRadius="@dimen/dimen_16dp"
+    android:layout_margin="@dimen/dimen_8dp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvGenre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sample_genre"
+        android:layout_gravity="center"/>
+
+</com.google.android.material.card.MaterialCardView>
