@@ -16,7 +16,7 @@ class MovieViewModel (private val repository: MovieRepository): ViewModel(), Mov
     private val fetchMovies = MutableLiveData<ResultState<EndlessMovie>>()
     private val fetchMovieDetail = MutableLiveData<ResultState<Movie>>()
     private val fetchVideoTrailer = MutableLiveData<ResultState<Video>>()
-    private val fetchReviews = MutableLiveData<ResultState<List<Review>>>()
+    private val fetchReviews = MutableLiveData<ResultState<EndlessReview>>()
 
     init {
         fetchGenres.value = ResultState.Loading()
@@ -36,8 +36,17 @@ class MovieViewModel (private val repository: MovieRepository): ViewModel(), Mov
 
     override fun fetchMovies(page:Int,genres:String): LiveData<ResultState<EndlessMovie>>{
         viewModelScope.launch {
-            val movieResponse = repository.fetchMovies(page,genres)
-            fetchMovies.value = movieResponse
+            when(val movieResponse = repository.fetchMovies(page,genres)){
+                is ResultState.Success ->{
+                    val data = movieResponse.data.movies
+                    if (data.isEmpty()){
+                        fetchMovies.value = ResultState.Empty()
+                    }else{
+                        fetchMovies.value = ResultState.Success(movieResponse.data)
+                    }
+                }
+                else -> fetchMovies.value = movieResponse
+            }
         }
         return fetchMovies
     }
@@ -58,10 +67,19 @@ class MovieViewModel (private val repository: MovieRepository): ViewModel(), Mov
         return fetchVideoTrailer
     }
 
-    override fun fetchReviews(movieId:Int): LiveData<ResultState<List<Review>>>{
+    override fun fetchReviews(movieId:Int,page: Int): LiveData<ResultState<EndlessReview>>{
         viewModelScope.launch {
-            val reviewsResponse = repository.fetchReviews(movieId)
-            fetchReviews.value = reviewsResponse
+            when(val reviewsResponse = repository.fetchReviews(movieId,page)){
+                is ResultState.Success ->{
+                    val data = reviewsResponse.data.reviews
+                    if (data.isEmpty()){
+                        fetchReviews.value = ResultState.Empty()
+                    }else{
+                        fetchReviews.value = ResultState.Success(reviewsResponse.data)
+                    }
+                }
+                else -> fetchReviews.value = reviewsResponse
+            }
         }
         return fetchReviews
     }

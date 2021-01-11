@@ -19,6 +19,7 @@ abstract class BaseEndlessRecyclerViewAdapter<T>(
 
     var page = 1
     var totalPage = 1
+    private val limitShimmer = 4
 
     var isLoadMoreLoading = false
 
@@ -35,6 +36,14 @@ abstract class BaseEndlessRecyclerViewAdapter<T>(
     protected abstract fun getItemResourceLayout(viewType: Int): Int
 
     protected abstract fun setLoadMoreProgress(isProgress: Boolean)
+
+    override fun getItemCount(): Int {
+        return if (isLoadMoreLoading){
+            datas.size + limitShimmer
+        }else{
+            datas.size
+        }
+    }
 
     var recyclerView: RecyclerView? = null
         set(recyclerView) {

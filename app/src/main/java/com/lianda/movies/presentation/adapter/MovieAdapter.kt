@@ -19,10 +19,6 @@ class MovieAdapter(
 ) :
     BaseEndlessRecyclerViewAdapter<Movie>(context, datas) {
 
-    companion object {
-        val LOAD_MORE_ITEM = Movie()
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<Movie> {
         return if (viewType == VIEW_TYPE_ITEM) {
             MovieViewHolder(getView(parent, viewType))
@@ -32,7 +28,7 @@ class MovieAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (datas[position] != LOAD_MORE_ITEM) {
+        return if (!isLoadMoreLoading) {
             VIEW_TYPE_ITEM
         } else {
             VIEW_TYPE_LOAD_MORE
@@ -40,31 +36,24 @@ class MovieAdapter(
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<Movie>, position: Int) {
-        holder.bind(data = datas[position])
+        if (datas.isNotEmpty()){
+           if (holder is MovieViewHolder) holder.bind(data = datas[position])
+        }
     }
 
     override fun getItemResourceLayout(viewType: Int): Int {
         return if (viewType == VIEW_TYPE_ITEM) {
             R.layout.item_movie
         } else {
-            R.layout.item_loading
+            R.layout.item_movie_loading
         }
     }
 
     public override fun setLoadMoreProgress(isProgress: Boolean) {
         isLoadMoreLoading = isProgress
-        if (isProgress) {
-            datas.add(datas.size, LOAD_MORE_ITEM)
-        } else {
-            if (datas.size > 0) {
-                datas.remove(LOAD_MORE_ITEM)
-            }
-        }
         notifyDataSetChanged()
     }
 
-
-    override fun getItemCount() = datas.size
 
     inner class MovieViewHolder(itemView: View) : BaseViewHolder<Movie>(itemView) {
         override fun bind(data: Movie) {
@@ -81,18 +70,9 @@ class MovieAdapter(
         }
     }
 
-
     inner class LoadMoreViewHolder(
         view: View
     ) : BaseViewHolder<Movie>(view) {
-        override fun bind(data: Movie) {
-            with(itemView) {
-                if (isLoadMoreLoading) {
-                    pbLoading.visibility = View.VISIBLE
-                } else {
-                    pbLoading.visibility = View.GONE
-                }
-            }
-        }
+        override fun bind(data: Movie) {}
     }
 }

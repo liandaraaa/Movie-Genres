@@ -84,13 +84,17 @@ class MovieRepositoryImpl (private val api: MovieApi): MovieRepository {
         }
     }
 
-    override suspend fun fetchReviews(movieId: Int): ResultState<List<Review>> {
+    override suspend fun fetchReviews(movieId: Int,page: Int): ResultState<EndlessReview> {
         return try {
-            val response = api.fetchReviews(movieId)
+            val response = api.fetchReviews(movieId,page)
             if (response.isSuccessful){
                 response.body()?.let {
                     withContext(Dispatchers.IO){
-                        handleApiSuccess(data = it.reviewSourceApis?.map { it.toReview() }.orEmpty())
+                        val endlessReview = EndlessReview(
+                            totalPage = it.totalPages ?: 0,
+                            reviews =  it.reviewSourceApis?.map { it.toReview() }.orEmpty()
+                        )
+                        handleApiSuccess(data = endlessReview)
                     }
                 } ?: handleApiError(response)
             }else{

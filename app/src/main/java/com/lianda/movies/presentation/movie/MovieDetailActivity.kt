@@ -6,10 +6,12 @@ import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lianda.movies.R
 import com.lianda.movies.base.BaseActivity
+import com.lianda.movies.domain.model.EndlessReview
 import com.lianda.movies.domain.model.Movie
 import com.lianda.movies.domain.model.Review
 import com.lianda.movies.domain.model.Video
 import com.lianda.movies.presentation.adapter.ReviewAdapter
+import com.lianda.movies.presentation.review.ReviewListActivity
 import com.lianda.movies.presentation.viewmodel.MovieViewModel
 import com.lianda.movies.utils.common.ResultState
 import com.lianda.movies.utils.constants.AppConstants.KEY_MOVIE
@@ -33,9 +35,11 @@ class MovieDetailActivity : BaseActivity() {
 
     private val movieViewModel: MovieViewModel by viewModel()
 
-    private val reviewAdapter: ReviewAdapter by lazy { ReviewAdapter(this, listOf()) }
+    private val reviewAdapter: ReviewAdapter by lazy { ReviewAdapter(this, mutableListOf(), true) }
 
     private var movie: Movie? = null
+
+    private var reviewPage = 1
 
     override val layout: Int = R.layout.activity_movie_detail
 
@@ -53,6 +57,11 @@ class MovieDetailActivity : BaseActivity() {
     }
 
     override fun onAction() {
+        btnViewAllReview.setOnClickListener {
+            movie?.let { movie ->
+                ReviewListActivity.start(this, movie.id)
+            }
+        }
     }
 
     override fun onObserver() {
@@ -82,25 +91,28 @@ class MovieDetailActivity : BaseActivity() {
     }
 
     private fun showVideoTrailer(data: Video) {
-        if(data.youtubeKey.isNotEmpty()){
+        if (data.youtubeKey.isNotEmpty()) {
             lifecycle.addObserver(pvTrailer)
             pvTrailer.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
                 override fun onReady(youTubePlayer: YouTubePlayer) {
                     youTubePlayer.loadVideo(data.youtubeKey, 0f)
                 }
 
-                override fun onError(youTubePlayer: YouTubePlayer, error: PlayerConstants.PlayerError) {
+                override fun onError(
+                    youTubePlayer: YouTubePlayer,
+                    error: PlayerConstants.PlayerError
+                ) {
                     super.onError(youTubePlayer, error)
                     onVideoTrailerError()
                 }
             })
-        }else{
-           onVideoTrailerEmpty()
+        } else {
+            onVideoTrailerEmpty()
         }
     }
 
     private fun showReviews(data: List<Review>) {
-        reviewAdapter.notifyDataAddOrUpdate(data)
+        reviewAdapter.notifyAddOrUpdateChanged(listOf(data.first()))
         rvReview.apply {
             layoutManager = LinearLayoutManager(this@MovieDetailActivity)
             adapter = reviewAdapter
@@ -128,7 +140,7 @@ class MovieDetailActivity : BaseActivity() {
     private fun observeReviews() {
         movie?.let { movie ->
             observe(
-                liveData = movieViewModel.fetchReviews(movie.id),
+                liveData = movieViewModel.fetchReviews(movie.id, reviewPage),
                 action = ::manageStateReviews
             )
         }
@@ -141,10 +153,12 @@ class MovieDetailActivity : BaseActivity() {
                 showMovieDetail(result.data)
             }
             is ResultState.Error -> {
-               onMovieDetailError(result.throwable.message.toString())
+                onMovieDetailError(result.throwable.message.toString())
             }
             is ResultState.Loading -> {
                 msvMovieDetail.showLoadingView()
+            }
+            is ResultState.Empty -> {
             }
         }
     }
@@ -161,22 +175,28 @@ class MovieDetailActivity : BaseActivity() {
             is ResultState.Loading -> {
                 msvTrailer.showLoadingView()
             }
+            is ResultState.Empty -> {
+            }
         }
     }
 
-    private fun manageStateReviews(result: ResultState<List<Review>>) {
+    private fun manageStateReviews(result: ResultState<EndlessReview>) {
         when (result) {
             is ResultState.Success -> {
                 msvReview.showContentView()
-                showReviews(result.data)
+                btnViewAllReview.visible()
+                showReviews(result.data.reviews)
             }
             is ResultState.Error -> {
-               onReviewsError(result.throwable.message.toString())
+                btnViewAllReview.gone()
+                onReviewsError(result.throwable.message.toString())
             }
             is ResultState.Loading -> {
+                btnViewAllReview.gone()
                 msvReview.showLoadingView()
             }
             is ResultState.Empty -> {
+                btnViewAllReview.gone()
                 onReviewsEmpty()
             }
         }
@@ -190,7 +210,7 @@ class MovieDetailActivity : BaseActivity() {
         )
     }
 
-    private fun onReviewsError(message:String) {
+    private fun onReviewsError(message: String) {
         msvReview.showErrorView(
             icon = R.drawable.ic_movie_broken,
             title = getString(R.string.label_oops),
@@ -202,7 +222,7 @@ class MovieDetailActivity : BaseActivity() {
         )
     }
 
-    private fun onMovieDetailError(message:String) {
+    private fun onMovieDetailError(message: String) {
         msvMovieDetail.showErrorView(
             icon = R.drawable.ic_movie_broken,
             title = getString(R.string.label_oops),
@@ -214,7 +234,7 @@ class MovieDetailActivity : BaseActivity() {
         )
     }
 
-    private fun onVideoTrailerError(){
+    private fun onVideoTrailerError() {
         msvTrailer.showErrorView(
             icon = R.drawable.ic_movie_broken,
             title = getString(R.string.label_oops),
@@ -226,7 +246,7 @@ class MovieDetailActivity : BaseActivity() {
         )
     }
 
-    private fun onVideoTrailerEmpty(){
+    private fun onVideoTrailerEmpty() {
         msvTrailer.showEmptyView(
             icon = R.drawable.ic_empty,
             title = getString(R.string.label_oops),

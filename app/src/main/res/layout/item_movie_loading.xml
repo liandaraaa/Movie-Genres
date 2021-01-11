@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.facebook.shimmer.ShimmerFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardCornerRadius="@dimen/dimen_6dp"
@@ -23,17 +23,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/avatars" />
-
-        <ProgressBar
-            android:id="@+id/pbPoster"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/imgPoster" />
+            android:src="@color/colorGrey"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvVote"
@@ -41,10 +31,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:background="@drawable/ic_baseline_star_24"
+            android:background="@color/colorGrey"
             android:gravity="center"
             android:padding="@dimen/dimen_20dp"
-            android:text="@string/sample_vote"
             app:layout_constraintEnd_toEndOf="@+id/imgPoster"
             app:layout_constraintTop_toBottomOf="@+id/imgPoster" />
 
@@ -63,7 +52,7 @@
             app:layout_constraintEnd_toStartOf="@+id/tvVote"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imgPoster"
-            tools:text="@string/sample_movie_name" />
+            android:background="@color/colorGrey" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvDate"
@@ -77,8 +66,8 @@
             app:layout_constraintEnd_toStartOf="@+id/tvVote"
             app:layout_constraintStart_toStartOf="@+id/tvTitle"
             app:layout_constraintTop_toBottomOf="@+id/tvTitle"
-            tools:text="@string/sample_date" />
+            android:background="@color/colorGrey"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</com.google.android.material.card.MaterialCardView>
+</com.facebook.shimmer.ShimmerFrameLayout>

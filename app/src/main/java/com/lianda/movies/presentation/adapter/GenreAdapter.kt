@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.item_genre.view.*
 class GenreAdapter(
     private val context: Context,
     var data: List<Genre>,
-    val onGenreClicked: ((genreId:Int) -> Unit)? = null
+    val onGenreClicked: ((genre: Genre) -> Unit)? = null
 ) :
     RecyclerView.Adapter<GenreAdapter.GenreViewHolder>() {
 
@@ -35,7 +35,7 @@ class GenreAdapter(
                 tvGenre.text = data.name
 
                 setOnClickListener {
-                    onGenreClicked?.invoke(data.id)
+                    onGenreClicked?.invoke(data)
                 }
             }
         }

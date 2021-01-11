@@ -24,6 +24,7 @@ interface MovieApi {
     suspend fun fetchVideos(@Path("id") movieId: Int): Response<VideoListSourceApi>
 
     @GET("movie/{id}/reviews")
-    suspend fun fetchReviews(@Path("id") movieId: Int): Response<ReviewListSourceApi>
+    suspend fun fetchReviews(@Path("id") movieId: Int,
+                             @Query("page") page: Int,): Response<ReviewListSourceApi>
 
 }

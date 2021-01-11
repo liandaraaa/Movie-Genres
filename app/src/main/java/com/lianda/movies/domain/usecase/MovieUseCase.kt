@@ -10,6 +10,6 @@ interface MovieUseCase {
     fun fetchMovies(page: Int,genres:String): LiveData<ResultState<EndlessMovie>>
     fun fetchMovieDetail(movieId: Int): LiveData<ResultState<Movie>>
     fun fetchVideoTrailer(movieId: Int): LiveData<ResultState<Video>>
-    fun fetchReviews(movieId: Int):LiveData<ResultState<List<Review>>>
+    fun fetchReviews(movieId: Int,page: Int):LiveData<ResultState<EndlessReview>>
 
 }

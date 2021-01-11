@@ -337,15 +337,30 @@
                 android:layout_marginTop="@dimen/dimen_16dp"
                 android:background="@color/colorGreyTwo" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvLabelReview"
-                style="@style/MovieTextView.SubHeader.Medium"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dimen_16dp"
                 android:layout_marginTop="@dimen/dimen_16dp"
                 android:layout_marginEnd="@dimen/dimen_16dp"
-                android:text="@string/label_review"
-                android:visibility="visible"
-                app:textAllCaps="true" />
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvLabelReview"
+                    style="@style/MovieTextView.SubHeader.Medium"
+                    android:text="@string/label_review"
+                    android:visibility="visible"
+                    app:textAllCaps="true"
+                    android:layout_weight="1"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnViewAllReview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/action_view_all"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+            </LinearLayout>
 
             <com.lianda.movies.utils.custom.CustomMultiStateView
                 android:id="@+id/msvReview"
@@ -362,7 +377,7 @@
                     android:layout_height="wrap_content"
                     android:clipToPadding="false"
                     android:nestedScrollingEnabled="false"
-                    tools:itemCount="5"
+                    tools:itemCount="1"
                     tools:listitem="@layout/item_review" />
 
             </com.lianda.movies.utils.custom.CustomMultiStateView>

@@ -1,41 +1,69 @@
 package com.lianda.movies.presentation.adapter
 
 import android.content.Context
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import com.lianda.movies.R
+import com.lianda.movies.base.BaseEndlessRecyclerViewAdapter
 import com.lianda.movies.base.BaseViewHolder
 import com.lianda.movies.domain.model.Review
 import kotlinx.android.synthetic.main.item_review.view.*
 
-class ReviewAdapter(private val context: Context, var data: List<Review>) :
-    RecyclerView.Adapter<ReviewAdapter.MovieViewHolder>() {
+class ReviewAdapter(override val context: Context, var data: MutableList<Review>, val isPreview:Boolean = false) :
+    BaseEndlessRecyclerViewAdapter<Review>(context, data) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
-        return MovieViewHolder(
-            LayoutInflater.from(context).inflate(R.layout.item_review, parent, false)
-        )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<Review> {
+        return if (viewType == VIEW_TYPE_ITEM) {
+            ReviewViewHolder(getView(parent, viewType))
+        } else {
+            LoadMoreViewHolder(getView(parent, viewType))
+        }
     }
 
-    override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        holder.bind(data[position])
+    override fun getItemViewType(position: Int): Int {
+        return if (!isLoadMoreLoading) {
+            VIEW_TYPE_ITEM
+        } else {
+            VIEW_TYPE_LOAD_MORE
+        }
     }
 
-    override fun getItemCount() = data.size
+    override fun onBindViewHolder(holder: BaseViewHolder<Review>, position: Int) {
+        if (datas.isNotEmpty()) {
+            if (holder is ReviewViewHolder) holder.bind(data = datas[position])
+        }
+    }
 
-    inner class MovieViewHolder(itemView: View) : BaseViewHolder<Review>(itemView) {
+    override fun getItemResourceLayout(viewType: Int): Int {
+        return if (viewType == VIEW_TYPE_ITEM) {
+            R.layout.item_review
+        } else {
+            R.layout.item_review_loading
+        }
+    }
+
+    public override fun setLoadMoreProgress(isProgress: Boolean) {
+        isLoadMoreLoading = isProgress
+        notifyDataSetChanged()
+    }
+
+
+    inner class ReviewViewHolder(itemView: View) : BaseViewHolder<Review>(itemView) {
         override fun bind(data: Review) {
             with(itemView) {
                 tvName.text = data.author
                 tvComment.text = data.content
+
+                if (isPreview){
+                    tvComment.maxLines = 3
+                }
             }
         }
     }
 
-    fun notifyDataAddOrUpdate(newData: List<Review>) {
-        data = newData
-        notifyDataSetChanged()
+    inner class LoadMoreViewHolder(
+        view: View
+    ) : BaseViewHolder<Review>(view) {
+        override fun bind(data: Review) {}
     }
 }

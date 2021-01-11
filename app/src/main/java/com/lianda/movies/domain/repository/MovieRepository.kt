@@ -9,6 +9,6 @@ interface MovieRepository {
     suspend fun fetchMovies(page:Int,genres:String) : ResultState<EndlessMovie>
     suspend fun fetchMovieDetail(movieId:Int) : ResultState<Movie>
     suspend fun fetchVideoTrailer(movieId: Int) : ResultState<Video>
-    suspend fun fetchReviews(movieId: Int) : ResultState<List<Review>>
+    suspend fun fetchReviews(movieId: Int,page: Int) : ResultState<EndlessReview>
 
 }

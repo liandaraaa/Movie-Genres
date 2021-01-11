@@ -4,16 +4,16 @@ import com.lianda.movies.utils.common.ApiErrorOperator
 import com.lianda.movies.utils.common.ResultState
 import retrofit2.Response
 
-fun <T : Any> handleApiSuccess(message: String = "", data: T): ResultState<T> {
+fun <T : Any> handleApiSuccess(data: T): ResultState<T> {
     val isList = data is List<*>
     return if (isList) {
         return if ((data as List<*>).isEmpty()) {
             ResultState.Empty()
         } else {
-            ResultState.Success(data, message)
+            ResultState.Success(data)
         }
     } else {
-        ResultState.Success(data, message)
+        ResultState.Success(data)
     }
 }
 
