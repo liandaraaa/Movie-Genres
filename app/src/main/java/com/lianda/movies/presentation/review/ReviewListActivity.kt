@@ -3,7 +3,6 @@ package com.lianda.movies.presentation.review
 import android.content.Context
 import android.content.Intent
 import android.view.MenuItem
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lianda.movies.R
 import com.lianda.movies.base.BaseActivity
@@ -65,7 +64,7 @@ class ReviewListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoad
     }
 
     override fun onUi() {
-        setupToolbar(toolbar,getString(R.string.label_review),true)
+        setupToolbar(toolbar, getString(R.string.label_review), true)
     }
 
     override fun onAction() {

@@ -15,6 +15,7 @@
     <dimen name="dimen_16dp">16dp</dimen>
     <dimen name="dimen_34dp">34dp</dimen>
     <dimen name="dimen_40dp">40dp</dimen>
+    <dimen name="dimen_35dp">35dp</dimen>
 
     <dimen name="text_size_12sp">12sp</dimen>
     <dimen name="text_size_14sp">14sp</dimen>

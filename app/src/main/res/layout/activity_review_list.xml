@@ -10,7 +10,7 @@
     <com.lianda.movies.utils.custom.CustomMultiStateView
         android:id="@+id/msvReview"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/dimen_0dp"
         app:emptyView="@layout/layout_dialog"
         app:errorView="@layout/layout_dialog"
         app:loadingView="@layout/layout_loading"

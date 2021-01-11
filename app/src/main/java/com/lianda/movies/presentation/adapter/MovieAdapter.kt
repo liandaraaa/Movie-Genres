@@ -9,7 +9,6 @@ import com.lianda.movies.base.BaseViewHolder
 import com.lianda.movies.domain.model.Movie
 import com.lianda.movies.utils.extentions.loadImage
 import com.lianda.movies.utils.extentions.onSingleClickListener
-import kotlinx.android.synthetic.main.item_loading.view.*
 import kotlinx.android.synthetic.main.item_movie.view.*
 
 class MovieAdapter(

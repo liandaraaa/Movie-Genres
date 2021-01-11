@@ -15,9 +15,11 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.Nullable
 import com.lianda.movies.R
 
-class CustomMultiStateView @JvmOverloads constructor(context: Context,
-                                                      attrs: AttributeSet? = null,
-                                                      defStyle: Int = 0): FrameLayout(context, attrs, defStyle){
+class CustomMultiStateView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyle: Int = 0
+) : FrameLayout(context, attrs, defStyle) {
 
     enum class ViewState {
         CONTENT,
@@ -74,13 +76,15 @@ class CustomMultiStateView @JvmOverloads constructor(context: Context,
             addView(inflatedErrorView, inflatedErrorView.layoutParams)
         }
 
-        viewState = when (a.getInt(R.styleable.CustomMultiStateView_viewState, VIEW_STATE_CONTENT)) {
-            VIEW_STATE_ERROR -> ViewState.ERROR
-            VIEW_STATE_EMPTY -> ViewState.EMPTY
-            VIEW_STATE_LOADING -> ViewState.LOADING
-            else -> ViewState.CONTENT
-        }
-        animateLayoutChanges = a.getBoolean(R.styleable.CustomMultiStateView_animateViewChanges, false)
+        viewState =
+            when (a.getInt(R.styleable.CustomMultiStateView_viewState, VIEW_STATE_CONTENT)) {
+                VIEW_STATE_ERROR -> ViewState.ERROR
+                VIEW_STATE_EMPTY -> ViewState.EMPTY
+                VIEW_STATE_LOADING -> ViewState.LOADING
+                else -> ViewState.CONTENT
+            }
+        animateLayoutChanges =
+            a.getBoolean(R.styleable.CustomMultiStateView_animateViewChanges, false)
         a.recycle()
     }
 
@@ -138,7 +142,11 @@ class CustomMultiStateView @JvmOverloads constructor(context: Context,
     }
 
 
-    fun setViewForState(@LayoutRes layoutRes: Int, state: ViewState, switchToState: Boolean = false) {
+    fun setViewForState(
+        @LayoutRes layoutRes: Int,
+        state: ViewState,
+        switchToState: Boolean = false
+    ) {
         val view = LayoutInflater.from(context).inflate(layoutRes, this, false)
         setViewForState(view, state, switchToState)
     }
@@ -202,7 +210,12 @@ class CustomMultiStateView @JvmOverloads constructor(context: Context,
         return super.addViewInLayout(child, index, params)
     }
 
-    override fun addViewInLayout(child: View, index: Int, params: ViewGroup.LayoutParams, preventRequestLayout: Boolean): Boolean {
+    override fun addViewInLayout(
+        child: View,
+        index: Int,
+        params: ViewGroup.LayoutParams,
+        preventRequestLayout: Boolean
+    ): Boolean {
         if (isValidContentView(child)) contentView = child
         return super.addViewInLayout(child, index, params, preventRequestLayout)
     }
@@ -304,7 +317,8 @@ class CustomMultiStateView @JvmOverloads constructor(context: Context,
                     previousView.visibility = View.GONE
                     val currentView = requireNotNull(getView(viewState))
                     currentView.visibility = View.VISIBLE
-                    ObjectAnimator.ofFloat(currentView, "alpha", 0.0f, 1.0f).setDuration(250L).start()
+                    ObjectAnimator.ofFloat(currentView, "alpha", 0.0f, 1.0f).setDuration(250L)
+                        .start()
                 }
             })
         }.start()

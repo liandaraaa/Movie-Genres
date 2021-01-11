@@ -8,12 +8,16 @@ fun emptyString() = ""
 
 fun Int.toReadableMinutes(): String {
     val minutes = this
-    return if (minutes < 60) {
-        String.format("%d mins", minutes)
-    } else if (minutes < 1440) {
-        String.format("%d hrs, %d mins", minutes / 60, minutes % 60)
-    } else {
-        String.format("%d days", minutes / 1440)
+    return when {
+        minutes < 60 -> {
+            String.format("%d mins", minutes)
+        }
+        minutes < 1440 -> {
+            String.format("%d hrs, %d mins", minutes / 60, minutes % 60)
+        }
+        else -> {
+            String.format("%d days", minutes / 1440)
+        }
     }
 }
 
