@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.lianda.movies.R
 import com.lianda.movies.base.BaseActivity
 import com.lianda.movies.base.BaseEndlessRecyclerViewAdapter
+import com.lianda.movies.databinding.ActivityReviewListBinding
 import com.lianda.movies.domain.model.EndlessReview
 import com.lianda.movies.presentation.adapter.ReviewAdapter
 import com.lianda.movies.presentation.viewmodel.MovieViewModel
@@ -30,6 +31,8 @@ class ReviewListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoad
 
     @Inject
     lateinit var movieViewModel: MovieViewModel
+    
+    private lateinit var binding:ActivityReviewListBinding
 
     private var reviewAdapter: ReviewAdapter? = null
 
@@ -40,7 +43,10 @@ class ReviewListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoad
 
     private var movieId = 0
 
-    override val layout: Int = R.layout.activity_review_list
+    override fun onInflateView() {
+        binding = ActivityReviewListBinding.inflate(layoutInflater)
+        layout = binding.root
+    }
 
     override fun onPreparation() {
         AndroidInjection.inject(this)
@@ -56,7 +62,7 @@ class ReviewListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoad
                 recyclerView = rvReview
             }
 
-            rvReview.apply {
+            binding.rvReview.apply {
                 layoutManager = gridLayoutManager
                 adapter = reviewAdapter
             }
@@ -88,7 +94,7 @@ class ReviewListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoad
     private fun manageStateReview(result: ResultState<EndlessReview>) {
         when (result) {
             is ResultState.Success -> {
-                msvReview.showContentView()
+                binding.msvReview.showContentView()
                 isLoadMore = false
                 reviewAdapter?.setLoadMoreProgress(false)
                 totalPages = result.data.totalPage
@@ -96,7 +102,7 @@ class ReviewListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoad
                 reviewAdapter?.notifyAddOrUpdateChanged(result.data.reviews)
             }
             is ResultState.Error -> {
-                msvReview.showErrorView(
+                binding.msvReview.showErrorView(
                     icon = R.drawable.ic_movie_broken,
                     title = getString(R.string.label_oops),
                     message = result.throwable.message,
@@ -107,7 +113,7 @@ class ReviewListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoad
                 )
             }
             is ResultState.Loading -> {
-                msvReview.showLoadingView()
+                binding.msvReview.showLoadingView()
                 isLoadMore = true
                 reviewAdapter?.setLoadMoreProgress(true)
             }
@@ -118,7 +124,7 @@ class ReviewListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoad
                     reviewAdapter?.removeScrollListener()
                 } else {
                     reviewAdapter?.datas?.clear()
-                    msvReview.showEmptyView(
+                    binding.msvReview.showEmptyView(
                         icon = R.drawable.ic_empty,
                         title = getString(R.string.label_oops),
                         message = getString(R.string.message_empty_movies)

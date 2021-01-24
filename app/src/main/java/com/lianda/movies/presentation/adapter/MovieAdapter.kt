@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import com.lianda.movies.R
 import com.lianda.movies.base.BaseEndlessRecyclerViewAdapter
 import com.lianda.movies.base.BaseViewHolder
+import com.lianda.movies.databinding.ItemMovieBinding
 import com.lianda.movies.domain.model.Movie
 import com.lianda.movies.utils.extentions.loadImage
 import com.lianda.movies.utils.extentions.onSingleClickListener
@@ -55,12 +56,15 @@ class MovieAdapter(
 
 
     inner class MovieViewHolder(itemView: View) : BaseViewHolder<Movie>(itemView) {
+        val binding = ItemMovieBinding.bind(itemView)
         override fun bind(data: Movie) {
             with(itemView) {
-                imgPoster.loadImage(data.posterPath, pbPoster)
-                tvTitle.text = data.title
-                tvDate.text = data.releaseDate
-                tvVote.text = data.voteAverage.toString()
+                binding.apply {
+                    imgPoster.loadImage(data.posterPath, pbPoster)
+                    tvTitle.text = data.title
+                    tvDate.text = data.releaseDate
+                    tvVote.text = data.voteAverage.toString()
+                }
 
                 onSingleClickListener {
                     onMovieClicked?.invoke(data)

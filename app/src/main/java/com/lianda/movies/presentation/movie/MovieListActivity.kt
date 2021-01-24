@@ -2,11 +2,13 @@ package com.lianda.movies.presentation.movie
 
 import android.content.Context
 import android.content.Intent
+import android.view.LayoutInflater
 import android.view.MenuItem
 import androidx.recyclerview.widget.GridLayoutManager
 import com.lianda.movies.R
 import com.lianda.movies.base.BaseActivity
 import com.lianda.movies.base.BaseEndlessRecyclerViewAdapter
+import com.lianda.movies.databinding.ActivityMovieListBinding
 import com.lianda.movies.domain.model.EndlessMovie
 import com.lianda.movies.domain.model.Genre
 import com.lianda.movies.presentation.adapter.MovieAdapter
@@ -33,6 +35,8 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
     @Inject
     lateinit var movieViewModel: MovieViewModel
 
+    private lateinit var binding : ActivityMovieListBinding
+
     private var movieAdapter: MovieAdapter? = null
 
     private var isLoadMore = false
@@ -42,7 +46,10 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
 
     private var genre: Genre? = null
 
-    override val layout: Int = R.layout.activity_movie_list
+    override fun onInflateView() {
+        binding = ActivityMovieListBinding.inflate(layoutInflater)
+        layout = binding.root
+    }
 
     override fun onPreparation() {
         AndroidInjection.inject(this)
@@ -60,7 +67,7 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
                 recyclerView = rvMovies
             }
 
-            rvMovies.apply {
+            binding.rvMovies.apply {
                 layoutManager = gridLayoutManager
                 adapter = movieAdapter
             }
@@ -95,7 +102,7 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
     private fun manageStateMovie(result: ResultState<EndlessMovie>) {
         when (result) {
             is ResultState.Success -> {
-                msvMovie.showContentView()
+                binding.msvMovie.showContentView()
                 isLoadMore = false
                 movieAdapter?.setLoadMoreProgress(false)
                 totalPages = result.data.totalPage
@@ -103,7 +110,7 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
                 movieAdapter?.notifyAddOrUpdateChanged(result.data.movies)
             }
             is ResultState.Error -> {
-                msvMovie.showErrorView(
+                binding.msvMovie.showErrorView(
                     icon = R.drawable.ic_movie_broken,
                     title = getString(R.string.label_oops),
                     message = result.throwable.message,
@@ -114,7 +121,7 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
                 )
             }
             is ResultState.Loading -> {
-                msvMovie.showLoadingView()
+                binding.msvMovie.showLoadingView()
                 isLoadMore = true
                 movieAdapter?.setLoadMoreProgress(true)
             }
@@ -125,7 +132,7 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
                     movieAdapter?.removeScrollListener()
                 } else {
                     movieAdapter?.datas?.clear()
-                    msvMovie.showEmptyView(
+                    binding.msvMovie.showEmptyView(
                         icon = R.drawable.ic_empty,
                         title = getString(R.string.label_oops),
                         message = getString(R.string.message_empty_movies)
