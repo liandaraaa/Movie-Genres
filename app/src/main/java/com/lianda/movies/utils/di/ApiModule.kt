@@ -1,11 +1,15 @@
 package com.lianda.movies.utils.di
 
 import com.lianda.movies.data.api.remote.MovieApi
-import org.koin.dsl.module
+import dagger.Module
+import dagger.Provides
 import retrofit2.Retrofit
+import javax.inject.Singleton
 
-val apiModule = module {
-    single { provideMovieApi(get()) }
+@Module
+class ApiModule {
+
+    @Provides
+    @Singleton
+    fun provideMovieApi(retrofit: Retrofit): MovieApi = retrofit.create(MovieApi::class.java)
 }
-
-fun provideMovieApi(retrofit: Retrofit):MovieApi = retrofit.create(MovieApi::class.java)

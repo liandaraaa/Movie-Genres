@@ -13,9 +13,10 @@ import com.lianda.movies.presentation.viewmodel.MovieViewModel
 import com.lianda.movies.utils.common.ResultState
 import com.lianda.movies.utils.constants.AppConstants.KEY_MOVIE
 import com.lianda.movies.utils.extentions.*
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_review_list.*
 import kotlinx.android.synthetic.main.layout_toolbar.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import javax.inject.Inject
 
 class ReviewListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadMoreListener {
     companion object {
@@ -27,7 +28,8 @@ class ReviewListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoad
         }
     }
 
-    private val movieViewModel: MovieViewModel by viewModel()
+    @Inject
+    lateinit var movieViewModel: MovieViewModel
 
     private var reviewAdapter: ReviewAdapter? = null
 
@@ -41,6 +43,8 @@ class ReviewListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoad
     override val layout: Int = R.layout.activity_review_list
 
     override fun onPreparation() {
+        AndroidInjection.inject(this)
+
         if (reviewAdapter == null) {
             val gridLayoutManager = LinearLayoutManager(this)
             reviewAdapter = ReviewAdapter(this, mutableListOf())

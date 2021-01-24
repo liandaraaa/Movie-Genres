@@ -14,9 +14,10 @@ import com.lianda.movies.presentation.viewmodel.MovieViewModel
 import com.lianda.movies.utils.common.ResultState
 import com.lianda.movies.utils.constants.AppConstants.KEY_GENRE
 import com.lianda.movies.utils.extentions.*
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_movie_list.*
 import kotlinx.android.synthetic.main.layout_toolbar.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import javax.inject.Inject
 
 class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadMoreListener {
 
@@ -29,7 +30,8 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
         }
     }
 
-    private val movieViewModel: MovieViewModel by viewModel()
+    @Inject
+    lateinit var movieViewModel: MovieViewModel
 
     private var movieAdapter: MovieAdapter? = null
 
@@ -38,11 +40,13 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
     private var currentPage = 1
     private var totalPages = 0
 
-    private var genre:Genre? = null
+    private var genre: Genre? = null
 
     override val layout: Int = R.layout.activity_movie_list
 
     override fun onPreparation() {
+        AndroidInjection.inject(this)
+
         if (movieAdapter == null) {
             val gridLayoutManager = GridLayoutManager(this, 2)
             movieAdapter = MovieAdapter(this, mutableListOf()) { movie ->
@@ -68,7 +72,7 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
     }
 
     override fun onUi() {
-        setupToolbar(toolbar,genre?.name ?: getString(R.string.label_genre), true)
+        setupToolbar(toolbar, genre?.name ?: getString(R.string.label_genre), true)
     }
 
     override fun onAction() {
@@ -140,7 +144,7 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId ==  android.R.id.home) onBackPressed()
+        if (item.itemId == android.R.id.home) onBackPressed()
         return super.onOptionsItemSelected(item)
     }
 

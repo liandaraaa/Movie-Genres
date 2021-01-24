@@ -19,8 +19,9 @@ import com.lianda.movies.utils.extentions.*
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_movie_detail.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import javax.inject.Inject
 
 class MovieDetailActivity : BaseActivity() {
 
@@ -33,7 +34,8 @@ class MovieDetailActivity : BaseActivity() {
         }
     }
 
-    private val movieViewModel: MovieViewModel by viewModel()
+    @Inject
+    lateinit var movieViewModel: MovieViewModel
 
     private val reviewAdapter: ReviewAdapter by lazy { ReviewAdapter(this, mutableListOf(), true) }
 
@@ -44,6 +46,7 @@ class MovieDetailActivity : BaseActivity() {
     override val layout: Int = R.layout.activity_movie_detail
 
     override fun onPreparation() {
+        AndroidInjection.inject(this)
     }
 
     override fun onIntent() {

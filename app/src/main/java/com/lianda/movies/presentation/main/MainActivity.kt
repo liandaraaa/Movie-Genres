@@ -9,27 +9,31 @@ import com.lianda.movies.presentation.movie.MovieListActivity
 import com.lianda.movies.presentation.viewmodel.MovieViewModel
 import com.lianda.movies.utils.common.ResultState
 import com.lianda.movies.utils.extentions.*
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
 
-    private val movieViewModel: MovieViewModel by viewModel()
+    @Inject
+    lateinit var movieViewModel: MovieViewModel
 
     private var genreAdapter: GenreAdapter? = null
 
     override val layout: Int = R.layout.activity_main
 
     override fun onPreparation() {
+        AndroidInjection.inject(this)
+
         if (genreAdapter == null) {
             val gridLayoutManager = GridLayoutManager(this@MainActivity, 2)
             genreAdapter = GenreAdapter(
                 context = this,
                 data = mutableListOf(),
                 onGenreClicked = {
-                    MovieListActivity.start(this,it)
+                    MovieListActivity.start(this, it)
                 })
-            
+
             rvMovies.apply {
                 layoutManager = gridLayoutManager
                 adapter = genreAdapter
