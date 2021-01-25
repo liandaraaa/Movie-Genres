@@ -10,7 +10,6 @@ import com.lianda.movies.databinding.ItemMovieBinding
 import com.lianda.movies.domain.model.Movie
 import com.lianda.movies.utils.extentions.loadImage
 import com.lianda.movies.utils.extentions.onSingleClickListener
-import kotlinx.android.synthetic.main.item_movie.view.*
 
 class MovieAdapter(
     override val context: Context,
@@ -56,7 +55,7 @@ class MovieAdapter(
 
 
     inner class MovieViewHolder(itemView: View) : BaseViewHolder<Movie>(itemView) {
-        val binding = ItemMovieBinding.bind(itemView)
+        private val binding = ItemMovieBinding.bind(itemView)
         override fun bind(data: Movie) {
             with(itemView) {
                 binding.apply {

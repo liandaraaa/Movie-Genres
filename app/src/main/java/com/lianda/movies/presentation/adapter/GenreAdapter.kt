@@ -9,7 +9,6 @@ import com.lianda.movies.R
 import com.lianda.movies.base.BaseViewHolder
 import com.lianda.movies.databinding.ItemGenreBinding
 import com.lianda.movies.domain.model.Genre
-import kotlinx.android.synthetic.main.item_genre.view.*
 
 class GenreAdapter(
     private val context: Context,
@@ -31,7 +30,7 @@ class GenreAdapter(
     override fun getItemCount() = data.size
 
     inner class GenreViewHolder(itemView: View) : BaseViewHolder<Genre>(itemView) {
-        val binding = ItemGenreBinding.bind(itemView)
+        private val binding = ItemGenreBinding.bind(itemView)
         override fun bind(data: Genre) {
             with(itemView) {
                 binding.tvGenre.text = data.name

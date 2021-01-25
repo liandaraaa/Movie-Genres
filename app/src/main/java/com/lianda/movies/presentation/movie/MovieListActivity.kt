@@ -2,7 +2,6 @@ package com.lianda.movies.presentation.movie
 
 import android.content.Context
 import android.content.Intent
-import android.view.LayoutInflater
 import android.view.MenuItem
 import androidx.recyclerview.widget.GridLayoutManager
 import com.lianda.movies.R
@@ -17,8 +16,6 @@ import com.lianda.movies.utils.common.ResultState
 import com.lianda.movies.utils.constants.AppConstants.KEY_GENRE
 import com.lianda.movies.utils.extentions.*
 import dagger.android.AndroidInjection
-import kotlinx.android.synthetic.main.activity_movie_list.*
-import kotlinx.android.synthetic.main.layout_toolbar.*
 import javax.inject.Inject
 
 class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadMoreListener {
@@ -64,12 +61,12 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
                 totalPage = totalPages
                 layoutManager = gridLayoutManager
                 onLoadMoreListener = this@MovieListActivity
-                recyclerView = rvMovies
+                recyclerView = binding.rvMovies
             }
 
+            binding.adapter = movieAdapter
             binding.rvMovies.apply {
                 layoutManager = gridLayoutManager
-                adapter = movieAdapter
             }
         }
     }
@@ -79,7 +76,7 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
     }
 
     override fun onUi() {
-        setupToolbar(toolbar, genre?.name ?: getString(R.string.label_genre), true)
+        setupToolbar(binding.toolbar.toolbar, genre?.name ?: getString(R.string.label_genre), true)
     }
 
     override fun onAction() {

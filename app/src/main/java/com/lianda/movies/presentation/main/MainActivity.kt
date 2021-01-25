@@ -11,7 +11,6 @@ import com.lianda.movies.presentation.viewmodel.MovieViewModel
 import com.lianda.movies.utils.common.ResultState
 import com.lianda.movies.utils.extentions.*
 import dagger.android.AndroidInjection
-import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
@@ -40,9 +39,9 @@ class MainActivity : BaseActivity() {
                     MovieListActivity.start(this, it)
                 })
 
+            binding.adapter = genreAdapter
             binding.rvGenres.apply {
                 layoutManager = gridLayoutManager
-                adapter = genreAdapter
             }
         }
     }
@@ -72,11 +71,11 @@ class MainActivity : BaseActivity() {
     private fun manageStateGenre(result: ResultState<List<Genre>>) {
         when (result) {
             is ResultState.Success -> {
-                binding.msvMovie.showContentView()
+                binding.msvGenre.showContentView()
                 genreAdapter?.notifyDataAddOrUpdate(result.data)
             }
             is ResultState.Error -> {
-                binding.msvMovie.showErrorView(
+                binding.msvGenre.showErrorView(
                     icon = R.drawable.ic_movie_broken,
                     title = getString(R.string.label_oops),
                     message = result.throwable.message,
@@ -87,10 +86,10 @@ class MainActivity : BaseActivity() {
                 )
             }
             is ResultState.Loading -> {
-                binding.msvMovie.showLoadingView()
+                binding.msvGenre.showLoadingView()
             }
             is ResultState.Empty -> {
-                binding.msvMovie.showEmptyView(
+                binding.msvGenre.showEmptyView(
                     icon = R.drawable.ic_empty,
                     title = getString(R.string.label_oops),
                     message = getString(R.string.message_empty_movies)

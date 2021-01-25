@@ -21,7 +21,6 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstan
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import dagger.android.AndroidInjection
-import kotlinx.android.synthetic.main.activity_movie_detail.*
 import javax.inject.Inject
 
 class MovieDetailActivity : BaseActivity() {
@@ -61,7 +60,7 @@ class MovieDetailActivity : BaseActivity() {
 
     override fun onUi() {
         setupToolbar(binding.toolbar, movie?.title ?: getString(R.string.label_movie), true)
-        collapsingToolbar.title = movie?.title ?: getString(R.string.label_movie)
+        binding.collapsingToolbar.title = movie?.title ?: getString(R.string.label_movie)
         showMovie()
     }
 
@@ -81,7 +80,7 @@ class MovieDetailActivity : BaseActivity() {
 
     private fun showMovie() {
         movie?.apply {
-            binding.imgMovie.loadImage(posterPath, pbPoster)
+            binding.imgMovie.loadImage(posterPath, binding.pbPoster)
             binding.tvTitle.text = title
             binding.tvVote.text = voteAverage.toString()
             binding.ratMovie.rating = voteAverage.toFloat().div(2)
@@ -101,7 +100,7 @@ class MovieDetailActivity : BaseActivity() {
 
     private fun showVideoTrailer(data: Video) {
         if (data.youtubeKey.isNotEmpty()) {
-            lifecycle.addObserver(pvTrailer)
+            lifecycle.addObserver(binding.pvTrailer)
             binding.pvTrailer.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
                 override fun onReady(youTubePlayer: YouTubePlayer) {
                     youTubePlayer.loadVideo(data.youtubeKey, 0f)

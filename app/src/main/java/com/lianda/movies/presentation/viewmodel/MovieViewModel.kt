@@ -20,6 +20,7 @@ class MovieViewModel @Inject constructor(private val repository: MovieRepository
     private val fetchVideoTrailer = MutableLiveData<ResultState<Video>>()
     private val fetchReviews = MutableLiveData<ResultState<EndlessReview>>()
 
+
     init {
         fetchGenres.value = ResultState.Loading()
         fetchMovies.value = ResultState.Loading()
@@ -32,6 +33,7 @@ class MovieViewModel @Inject constructor(private val repository: MovieRepository
         viewModelScope.launch {
             val genreResponse = repository.fetchOfficialGenres()
             fetchGenres.value = genreResponse
+
         }
         return fetchGenres
     }

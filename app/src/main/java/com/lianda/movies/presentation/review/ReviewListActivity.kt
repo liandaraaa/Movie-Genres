@@ -15,8 +15,6 @@ import com.lianda.movies.utils.common.ResultState
 import com.lianda.movies.utils.constants.AppConstants.KEY_MOVIE
 import com.lianda.movies.utils.extentions.*
 import dagger.android.AndroidInjection
-import kotlinx.android.synthetic.main.activity_review_list.*
-import kotlinx.android.synthetic.main.layout_toolbar.*
 import javax.inject.Inject
 
 class ReviewListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadMoreListener {
@@ -59,12 +57,12 @@ class ReviewListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoad
                 totalPage = totalPages
                 layoutManager = gridLayoutManager
                 onLoadMoreListener = this@ReviewListActivity
-                recyclerView = rvReview
+                recyclerView = binding.rvReview
             }
 
+            binding.adapter = reviewAdapter
             binding.rvReview.apply {
                 layoutManager = gridLayoutManager
-                adapter = reviewAdapter
             }
         }
     }
@@ -74,7 +72,7 @@ class ReviewListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoad
     }
 
     override fun onUi() {
-        setupToolbar(toolbar, getString(R.string.label_review), true)
+        setupToolbar(binding.toolbar.toolbar, getString(R.string.label_review), true)
     }
 
     override fun onAction() {
