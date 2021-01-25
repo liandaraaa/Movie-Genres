@@ -1,7 +1,10 @@
 package com.lianda.movies.utils.extentions
 
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
+import com.lianda.movies.R
 import com.lianda.movies.utils.custom.CustomMultiStateView
-import kotlinx.android.synthetic.main.layout_dialog.view.*
 
 
 fun CustomMultiStateView.showLoadingView(){
@@ -12,6 +15,11 @@ fun CustomMultiStateView.showEmptyView(icon:Int? = null, title:String? = null, m
     this.viewState = CustomMultiStateView.ViewState.EMPTY
 
     this.getView(CustomMultiStateView.ViewState.EMPTY)?.apply{
+        val imgIcon = findViewById<ImageView>(R.id.imgIcon)
+        val tvTitle = findViewById<TextView>(R.id.tvTitle)
+        val tvMessage = findViewById<TextView>(R.id.tvMessage)
+        val btnAction = findViewById<Button>(R.id.btnAction)
+
         if (icon != null) {
             imgIcon.setImageResource(icon)
         }
@@ -36,6 +44,11 @@ fun CustomMultiStateView.showErrorView(icon:Int? = null, title:String? = null, m
     this.viewState = CustomMultiStateView.ViewState.ERROR
 
     this.getView(CustomMultiStateView.ViewState.ERROR)?.apply{
+        val imgIcon = findViewById<ImageView>(R.id.imgIcon)
+        val tvTitle = findViewById<TextView>(R.id.tvTitle)
+        val tvMessage = findViewById<TextView>(R.id.tvMessage)
+        val btnAction = findViewById<Button>(R.id.btnAction)
+
         if (icon != null) {
             imgIcon.setImageResource(icon)
         }

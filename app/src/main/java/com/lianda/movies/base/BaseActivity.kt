@@ -1,13 +1,16 @@
 package com.lianda.movies.base
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.databinding.DataBindingUtil
 
 abstract class BaseActivity :AppCompatActivity(){
 
-    abstract val layout:Int
+    var layout:View? = null
 
+    abstract fun onInflateView()
     abstract fun onPreparation()
     abstract fun onIntent()
     abstract fun onUi()
@@ -16,7 +19,8 @@ abstract class BaseActivity :AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(layout)
+        onInflateView()
+        layout?.let { setContentView(it) }
 
         onPreparation()
         onIntent()

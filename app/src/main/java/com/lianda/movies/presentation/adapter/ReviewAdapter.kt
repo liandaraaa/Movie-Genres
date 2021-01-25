@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import com.lianda.movies.R
 import com.lianda.movies.base.BaseEndlessRecyclerViewAdapter
 import com.lianda.movies.base.BaseViewHolder
+import com.lianda.movies.databinding.ItemReviewBinding
 import com.lianda.movies.domain.model.Review
-import kotlinx.android.synthetic.main.item_review.view.*
 
 class ReviewAdapter(override val context: Context, var data: MutableList<Review>, val isPreview:Boolean = false) :
     BaseEndlessRecyclerViewAdapter<Review>(context, data) {
@@ -49,8 +49,9 @@ class ReviewAdapter(override val context: Context, var data: MutableList<Review>
 
 
     inner class ReviewViewHolder(itemView: View) : BaseViewHolder<Review>(itemView) {
+        private val binding = ItemReviewBinding.bind(itemView)
         override fun bind(data: Review) {
-            with(itemView) {
+            binding.apply {
                 tvName.text = data.author
                 tvComment.text = data.content
 

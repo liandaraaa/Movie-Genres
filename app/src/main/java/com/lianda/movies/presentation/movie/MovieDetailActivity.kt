@@ -6,6 +6,7 @@ import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lianda.movies.R
 import com.lianda.movies.base.BaseActivity
+import com.lianda.movies.databinding.ActivityMovieDetailBinding
 import com.lianda.movies.domain.model.EndlessReview
 import com.lianda.movies.domain.model.Movie
 import com.lianda.movies.domain.model.Review
@@ -19,8 +20,8 @@ import com.lianda.movies.utils.extentions.*
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
-import kotlinx.android.synthetic.main.activity_movie_detail.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import dagger.android.AndroidInjection
+import javax.inject.Inject
 
 class MovieDetailActivity : BaseActivity() {
 
@@ -33,7 +34,10 @@ class MovieDetailActivity : BaseActivity() {
         }
     }
 
-    private val movieViewModel: MovieViewModel by viewModel()
+    @Inject
+    lateinit var movieViewModel: MovieViewModel
+
+    private lateinit var binding: ActivityMovieDetailBinding
 
     private val reviewAdapter: ReviewAdapter by lazy { ReviewAdapter(this, mutableListOf(), true) }
 
@@ -41,9 +45,13 @@ class MovieDetailActivity : BaseActivity() {
 
     private var reviewPage = 1
 
-    override val layout: Int = R.layout.activity_movie_detail
+    override fun onInflateView() {
+        binding = ActivityMovieDetailBinding.inflate(layoutInflater)
+        layout = binding.root
+    }
 
     override fun onPreparation() {
+        AndroidInjection.inject(this)
     }
 
     override fun onIntent() {
@@ -51,13 +59,13 @@ class MovieDetailActivity : BaseActivity() {
     }
 
     override fun onUi() {
-        setupToolbar(toolbar, movie?.title ?: getString(R.string.label_movie), true)
-        collapsingToolbar.title = movie?.title ?: getString(R.string.label_movie)
+        setupToolbar(binding.toolbar, movie?.title ?: getString(R.string.label_movie), true)
+        binding.collapsingToolbar.title = movie?.title ?: getString(R.string.label_movie)
         showMovie()
     }
 
     override fun onAction() {
-        btnViewAllReview.setOnClickListener {
+        binding.btnViewAllReview.setOnClickListener {
             movie?.let { movie ->
                 ReviewListActivity.start(this, movie.id)
             }
@@ -72,28 +80,28 @@ class MovieDetailActivity : BaseActivity() {
 
     private fun showMovie() {
         movie?.apply {
-            imgMovie.loadImage(posterPath, pbPoster)
-            tvTitle.text = title
-            tvVote.text = voteAverage.toString()
-            ratMovie.rating = voteAverage.toFloat().div(2)
-            tvDate.text = releaseDate
+            binding.imgMovie.loadImage(posterPath, binding.pbPoster)
+            binding.tvTitle.text = title
+            binding.tvVote.text = voteAverage.toString()
+            binding.ratMovie.rating = voteAverage.toFloat().div(2)
+            binding.tvDate.text = releaseDate
         }
     }
 
     private fun showMovieDetail(data: Movie) {
         data.apply {
-            tvOriginalLanguage.text = originalLanguage
-            tvStatus.text = status
-            tvDuration.text = runtime.toReadableMinutes()
-            tvGenre.text = genres
-            tvDescription.text = overview
+            binding.tvOriginalLanguage.text = originalLanguage
+            binding.tvStatus.text = status
+            binding.tvDuration.text = runtime.toReadableMinutes()
+            binding.tvGenre.text = genres
+            binding.tvDescription.text = overview
         }
     }
 
     private fun showVideoTrailer(data: Video) {
         if (data.youtubeKey.isNotEmpty()) {
-            lifecycle.addObserver(pvTrailer)
-            pvTrailer.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
+            lifecycle.addObserver(binding.pvTrailer)
+            binding.pvTrailer.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
                 override fun onReady(youTubePlayer: YouTubePlayer) {
                     youTubePlayer.loadVideo(data.youtubeKey, 0f)
                 }
@@ -113,7 +121,7 @@ class MovieDetailActivity : BaseActivity() {
 
     private fun showReviews(data: List<Review>) {
         reviewAdapter.notifyAddOrUpdateChanged(listOf(data.first()))
-        rvReview.apply {
+        binding.rvReview.apply {
             layoutManager = LinearLayoutManager(this@MovieDetailActivity)
             adapter = reviewAdapter
         }
@@ -149,14 +157,14 @@ class MovieDetailActivity : BaseActivity() {
     private fun manageStateMovie(result: ResultState<Movie>) {
         when (result) {
             is ResultState.Success -> {
-                msvMovieDetail.showContentView()
+                binding.msvMovieDetail.showContentView()
                 showMovieDetail(result.data)
             }
             is ResultState.Error -> {
                 onMovieDetailError(result.throwable.message.toString())
             }
             is ResultState.Loading -> {
-                msvMovieDetail.showLoadingView()
+                binding.msvMovieDetail.showLoadingView()
             }
             is ResultState.Empty -> {
             }
@@ -166,14 +174,14 @@ class MovieDetailActivity : BaseActivity() {
     private fun manageStateVideoTrailer(result: ResultState<Video>) {
         when (result) {
             is ResultState.Success -> {
-                msvTrailer.showContentView()
+                binding.msvTrailer.showContentView()
                 showVideoTrailer(result.data)
             }
             is ResultState.Error -> {
                 onVideoTrailerError()
             }
             is ResultState.Loading -> {
-                msvTrailer.showLoadingView()
+                binding.msvTrailer.showLoadingView()
             }
             is ResultState.Empty -> {
             }
@@ -183,27 +191,27 @@ class MovieDetailActivity : BaseActivity() {
     private fun manageStateReviews(result: ResultState<EndlessReview>) {
         when (result) {
             is ResultState.Success -> {
-                msvReview.showContentView()
-                btnViewAllReview.visible()
+                binding.msvReview.showContentView()
+                binding.btnViewAllReview.visible()
                 showReviews(result.data.reviews)
             }
             is ResultState.Error -> {
-                btnViewAllReview.gone()
+                binding.btnViewAllReview.gone()
                 onReviewsError(result.throwable.message.toString())
             }
             is ResultState.Loading -> {
-                btnViewAllReview.gone()
-                msvReview.showLoadingView()
+                binding.btnViewAllReview.gone()
+                binding.msvReview.showLoadingView()
             }
             is ResultState.Empty -> {
-                btnViewAllReview.gone()
+                binding.btnViewAllReview.gone()
                 onReviewsEmpty()
             }
         }
     }
 
     private fun onReviewsEmpty() {
-        msvReview.showEmptyView(
+        binding.msvReview.showEmptyView(
             icon = R.drawable.ic_empty,
             title = getString(R.string.label_oops),
             message = getString(R.string.message_empty_reviews)
@@ -211,7 +219,7 @@ class MovieDetailActivity : BaseActivity() {
     }
 
     private fun onReviewsError(message: String) {
-        msvReview.showErrorView(
+        binding.msvReview.showErrorView(
             icon = R.drawable.ic_movie_broken,
             title = getString(R.string.label_oops),
             message = message,
@@ -223,7 +231,7 @@ class MovieDetailActivity : BaseActivity() {
     }
 
     private fun onMovieDetailError(message: String) {
-        msvMovieDetail.showErrorView(
+        binding.msvMovieDetail.showErrorView(
             icon = R.drawable.ic_movie_broken,
             title = getString(R.string.label_oops),
             message = message,
@@ -235,7 +243,7 @@ class MovieDetailActivity : BaseActivity() {
     }
 
     private fun onVideoTrailerError() {
-        msvTrailer.showErrorView(
+        binding.msvTrailer.showErrorView(
             icon = R.drawable.ic_movie_broken,
             title = getString(R.string.label_oops),
             message = getString(R.string.message_error_founded),
@@ -247,7 +255,7 @@ class MovieDetailActivity : BaseActivity() {
     }
 
     private fun onVideoTrailerEmpty() {
-        msvTrailer.showEmptyView(
+        binding.msvTrailer.showEmptyView(
             icon = R.drawable.ic_empty,
             title = getString(R.string.label_oops),
             message = getString(R.string.message_empty_videos)

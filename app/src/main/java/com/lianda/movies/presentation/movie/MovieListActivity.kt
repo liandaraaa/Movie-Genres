@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.lianda.movies.R
 import com.lianda.movies.base.BaseActivity
 import com.lianda.movies.base.BaseEndlessRecyclerViewAdapter
+import com.lianda.movies.databinding.ActivityMovieListBinding
 import com.lianda.movies.domain.model.EndlessMovie
 import com.lianda.movies.domain.model.Genre
 import com.lianda.movies.presentation.adapter.MovieAdapter
@@ -14,9 +15,8 @@ import com.lianda.movies.presentation.viewmodel.MovieViewModel
 import com.lianda.movies.utils.common.ResultState
 import com.lianda.movies.utils.constants.AppConstants.KEY_GENRE
 import com.lianda.movies.utils.extentions.*
-import kotlinx.android.synthetic.main.activity_movie_list.*
-import kotlinx.android.synthetic.main.layout_toolbar.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import dagger.android.AndroidInjection
+import javax.inject.Inject
 
 class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadMoreListener {
 
@@ -29,7 +29,10 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
         }
     }
 
-    private val movieViewModel: MovieViewModel by viewModel()
+    @Inject
+    lateinit var movieViewModel: MovieViewModel
+
+    private lateinit var binding : ActivityMovieListBinding
 
     private var movieAdapter: MovieAdapter? = null
 
@@ -38,11 +41,16 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
     private var currentPage = 1
     private var totalPages = 0
 
-    private var genre:Genre? = null
+    private var genre: Genre? = null
 
-    override val layout: Int = R.layout.activity_movie_list
+    override fun onInflateView() {
+        binding = ActivityMovieListBinding.inflate(layoutInflater)
+        layout = binding.root
+    }
 
     override fun onPreparation() {
+        AndroidInjection.inject(this)
+
         if (movieAdapter == null) {
             val gridLayoutManager = GridLayoutManager(this, 2)
             movieAdapter = MovieAdapter(this, mutableListOf()) { movie ->
@@ -53,12 +61,12 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
                 totalPage = totalPages
                 layoutManager = gridLayoutManager
                 onLoadMoreListener = this@MovieListActivity
-                recyclerView = rvMovies
+                recyclerView = binding.rvMovies
             }
 
-            rvMovies.apply {
+            binding.adapter = movieAdapter
+            binding.rvMovies.apply {
                 layoutManager = gridLayoutManager
-                adapter = movieAdapter
             }
         }
     }
@@ -68,7 +76,7 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
     }
 
     override fun onUi() {
-        setupToolbar(toolbar,genre?.name ?: getString(R.string.label_genre), true)
+        setupToolbar(binding.toolbar.toolbar, genre?.name ?: getString(R.string.label_genre), true)
     }
 
     override fun onAction() {
@@ -91,7 +99,7 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
     private fun manageStateMovie(result: ResultState<EndlessMovie>) {
         when (result) {
             is ResultState.Success -> {
-                msvMovie.showContentView()
+                binding.msvMovie.showContentView()
                 isLoadMore = false
                 movieAdapter?.setLoadMoreProgress(false)
                 totalPages = result.data.totalPage
@@ -99,7 +107,7 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
                 movieAdapter?.notifyAddOrUpdateChanged(result.data.movies)
             }
             is ResultState.Error -> {
-                msvMovie.showErrorView(
+                binding.msvMovie.showErrorView(
                     icon = R.drawable.ic_movie_broken,
                     title = getString(R.string.label_oops),
                     message = result.throwable.message,
@@ -110,7 +118,7 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
                 )
             }
             is ResultState.Loading -> {
-                msvMovie.showLoadingView()
+                binding.msvMovie.showLoadingView()
                 isLoadMore = true
                 movieAdapter?.setLoadMoreProgress(true)
             }
@@ -121,7 +129,7 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
                     movieAdapter?.removeScrollListener()
                 } else {
                     movieAdapter?.datas?.clear()
-                    msvMovie.showEmptyView(
+                    binding.msvMovie.showEmptyView(
                         icon = R.drawable.ic_empty,
                         title = getString(R.string.label_oops),
                         message = getString(R.string.message_empty_movies)
@@ -140,7 +148,7 @@ class MovieListActivity : BaseActivity(), BaseEndlessRecyclerViewAdapter.OnLoadM
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId ==  android.R.id.home) onBackPressed()
+        if (item.itemId == android.R.id.home) onBackPressed()
         return super.onOptionsItemSelected(item)
     }
 

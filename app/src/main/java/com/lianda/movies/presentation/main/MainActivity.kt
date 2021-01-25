@@ -3,36 +3,45 @@ package com.lianda.movies.presentation.main
 import androidx.recyclerview.widget.GridLayoutManager
 import com.lianda.movies.R
 import com.lianda.movies.base.BaseActivity
+import com.lianda.movies.databinding.ActivityMainBinding
 import com.lianda.movies.domain.model.Genre
 import com.lianda.movies.presentation.adapter.GenreAdapter
 import com.lianda.movies.presentation.movie.MovieListActivity
 import com.lianda.movies.presentation.viewmodel.MovieViewModel
 import com.lianda.movies.utils.common.ResultState
 import com.lianda.movies.utils.extentions.*
-import kotlinx.android.synthetic.main.activity_main.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import dagger.android.AndroidInjection
+import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
 
-    private val movieViewModel: MovieViewModel by viewModel()
+    @Inject
+    lateinit var movieViewModel: MovieViewModel
+
+    private lateinit var binding: ActivityMainBinding
 
     private var genreAdapter: GenreAdapter? = null
 
-    override val layout: Int = R.layout.activity_main
+    override fun onInflateView() {
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        layout = binding.root
+    }
 
     override fun onPreparation() {
+        AndroidInjection.inject(this)
+
         if (genreAdapter == null) {
             val gridLayoutManager = GridLayoutManager(this@MainActivity, 2)
             genreAdapter = GenreAdapter(
                 context = this,
                 data = mutableListOf(),
                 onGenreClicked = {
-                    MovieListActivity.start(this,it)
+                    MovieListActivity.start(this, it)
                 })
-            
-            rvMovies.apply {
+
+            binding.adapter = genreAdapter
+            binding.rvGenres.apply {
                 layoutManager = gridLayoutManager
-                adapter = genreAdapter
             }
         }
     }
@@ -62,11 +71,11 @@ class MainActivity : BaseActivity() {
     private fun manageStateGenre(result: ResultState<List<Genre>>) {
         when (result) {
             is ResultState.Success -> {
-                msvMovie.showContentView()
+                binding.msvGenre.showContentView()
                 genreAdapter?.notifyDataAddOrUpdate(result.data)
             }
             is ResultState.Error -> {
-                msvMovie.showErrorView(
+                binding.msvGenre.showErrorView(
                     icon = R.drawable.ic_movie_broken,
                     title = getString(R.string.label_oops),
                     message = result.throwable.message,
@@ -77,10 +86,10 @@ class MainActivity : BaseActivity() {
                 )
             }
             is ResultState.Loading -> {
-                msvMovie.showLoadingView()
+                binding.msvGenre.showLoadingView()
             }
             is ResultState.Empty -> {
-                msvMovie.showEmptyView(
+                binding.msvGenre.showEmptyView(
                     icon = R.drawable.ic_empty,
                     title = getString(R.string.label_oops),
                     message = getString(R.string.message_empty_movies)
